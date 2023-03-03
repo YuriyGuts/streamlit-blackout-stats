@@ -1,8 +1,10 @@
 import july
 import matplotlib.pyplot as plt
 import numpy as np
+import streamlit as st
 
 
+@st.cache_data(ttl=600)
 def generate_daily_plot(df_daily_downtime):
     """Given a dataframe of daily blackout durations, generate a calendar plot."""
 
@@ -20,7 +22,7 @@ def generate_daily_plot(df_daily_downtime):
         cmap="Oranges",
         ncols=3,
         figsize=(15, 9),
-        dpi=300,
+        dpi=96,
     )
 
     return fig
@@ -108,3 +110,8 @@ def calendar_plot(
 
     plt.subplots_adjust(wspace=0.75, hspace=0.5)
     return fig, axes
+
+
+def release_plot(fig):
+    fig.clear()
+    plt.close(fig)

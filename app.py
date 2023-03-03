@@ -15,7 +15,7 @@ from blackout_stats.stats import (
     generate_rolling_7d_data,
     transform_events_to_daily_records,
 )
-from blackout_stats.visualization import generate_daily_plot
+from blackout_stats.visualization import generate_daily_plot, release_plot
 
 
 def main():
@@ -37,6 +37,7 @@ def main():
     st.header("🗓️ Календар тривалості відключень (годин за добу)")
     fig = generate_daily_plot(df_daily_downtime)
     st.pyplot(fig)
+    release_plot(fig)
 
     st.header("📈 Середньотижнева тривалість відключень (годин за добу)")
     df_rolling_stats = generate_rolling_7d_data(df_daily_downtime)
