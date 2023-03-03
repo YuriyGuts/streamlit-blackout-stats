@@ -6,7 +6,10 @@ Entry point for the Streamlit app.
 import streamlit as st
 
 from blackout_stats.data_access import read_blackout_events_from_google_sheet
-from blackout_stats.formatting import format_human_readable_summary_stats_df
+from blackout_stats.formatting import (
+    format_human_readable_summary_stats_df,
+    format_last_n_blackouts_df,
+)
 from blackout_stats.stats import (
     compute_summary_statistics,
     generate_rolling_7d_data,
@@ -38,6 +41,10 @@ def main():
     st.header("📈 Середньотижнева тривалість відключень (годин за добу)")
     df_rolling_stats = generate_rolling_7d_data(df_daily_downtime)
     st.line_chart(df_rolling_stats)
+
+    st.header("⏱️ Останні 5 вимкнень")
+    df_last_5_blackouts = format_last_n_blackouts_df(df_blackout_events, n=5)
+    st.dataframe(df_last_5_blackouts)
 
 
 if __name__ == "__main__":
