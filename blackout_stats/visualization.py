@@ -18,7 +18,7 @@ def generate_daily_plot(df_daily_downtime):
         data=df_daily_downtime["daily_downtime"],
         title=None,
         value_label=True,
-        fontfamily="Helvetica",
+        fontfamily="DejaVu Sans",
         cmap="Oranges",
         ncols=3,
         figsize=(15, 9),
