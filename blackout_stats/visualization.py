@@ -21,7 +21,7 @@ def generate_daily_plot(df_daily_downtime):
         fontfamily="DejaVu Sans",
         cmap="Oranges",
         ncols=3,
-        figsize=(15, 9),
+        figsize=(15, 12),
         dpi=96,
     )
 
