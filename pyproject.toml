@@ -25,6 +25,7 @@ fixable = ["I", "D", "UP"]
 
 [tool.ruff.lint.isort]
 force-single-line = true
+extra-standard-library = ["zoneinfo"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"

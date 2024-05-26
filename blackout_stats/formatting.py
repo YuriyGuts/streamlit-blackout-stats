@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def format_human_readable_summary_stats_df(summary_stats):
+def format_human_readable_summary_stats_df(summary_stats: pd.DataFrame) -> pd.DataFrame:
     records = [
         {
             "Показник": "За весь час (годин)",
@@ -29,7 +29,7 @@ def format_human_readable_summary_stats_df(summary_stats):
     return df
 
 
-def format_last_n_blackouts_df(df_blackout_events, n=5):
+def format_last_n_blackouts_df(df_blackout_events: pd.DataFrame, n: int = 5) -> pd.DataFrame:
     df_last_n_blackouts = pd.DataFrame(df_blackout_events.tail(n))
 
     # Leave only the time part in the duration
