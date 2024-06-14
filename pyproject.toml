@@ -1,6 +1,7 @@
 [tool.mypy]
 disallow_untyped_defs = true
 disable_error_code = ["import-untyped"]
+exclude = "tests/.*"
 
 [tool.ruff]
 line-length = 100
@@ -49,6 +50,7 @@ pre-commit = "^3.7.1"
 ruff = "^0.4.5"
 mypy = "^1.10.0"
 pytest = "^8.2.1"
+coverage = "^7.5.3"
 
 [build-system]
 requires = ["poetry-core"]

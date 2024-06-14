@@ -8,8 +8,8 @@ import streamlit as st
 from blackout_stats.data_access import read_blackout_events_from_google_sheet
 from blackout_stats.formatting import format_human_readable_summary_stats_df
 from blackout_stats.formatting import format_last_n_blackouts_df
+from blackout_stats.stats import compute_rolling_statistics
 from blackout_stats.stats import compute_summary_statistics
-from blackout_stats.stats import generate_rolling_7d_data
 from blackout_stats.stats import transform_events_to_daily_records
 from blackout_stats.visualization import generate_daily_plot
 
@@ -38,7 +38,7 @@ def main() -> None:
     plot = generate_daily_plot(df_daily_downtime)
 
     st.header("📈 Середньотижнева тривалість відключень (годин за добу)")
-    df_rolling_stats = generate_rolling_7d_data(df_daily_downtime)
+    df_rolling_stats = compute_rolling_statistics(df_daily_downtime)
     st.line_chart(df_rolling_stats)
 
     st.header("⏱️ Останні 5 вимкнень")
