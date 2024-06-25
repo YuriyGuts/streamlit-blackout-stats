@@ -62,5 +62,6 @@ def read_blackout_events_from_google_sheet(
 
     query = f'SELECT * from "{sheet_url}"'
     df = query_google_sheet(query)
+    df = pd.DataFrame(df[(df["start_date"].notnull()) & (df["end_date"].notnull())])
 
     return df

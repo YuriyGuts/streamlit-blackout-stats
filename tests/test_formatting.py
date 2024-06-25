@@ -7,7 +7,7 @@ import pytest
 from blackout_stats import formatting as sut
 
 
-def test_format_human_readable_summary_stats_df():
+def test_format_human_readable_summary_stats_df_with_recent_stats():
     summary_stats = {
         "total_downtime": 31.5,
         "last_7_days_downtime": 28.0,
@@ -18,7 +18,7 @@ def test_format_human_readable_summary_stats_df():
     actual_df = sut.format_human_readable_summary_stats_df(summary_stats)
     expected_records = [
         {
-            "Показник": "За весь час (годин)",
+            "Показник": "За весь рік (годин)",
             "Значення": 31.5,
         },
         {
@@ -36,6 +36,28 @@ def test_format_human_readable_summary_stats_df():
         {
             "Показник": "За останні 30 днів, в середньому за день (годин)",
             "Значення": 1.05,
+        },
+    ]
+    expected_df = pd.DataFrame.from_records(expected_records, index="Показник")
+    pd.testing.assert_frame_equal(actual_df, expected_df)
+
+
+def test_format_human_readable_summary_stats_df_without_recent_stats():
+    summary_stats = {
+        "total_downtime": 31.5,
+        "last_7_days_downtime": 28.0,
+        "last_7_days_avg_downtime": 4.0,
+        "last_30_days_downtime": 31.5,
+        "last_30_days_avg_downtime": 1.05,
+    }
+    actual_df = sut.format_human_readable_summary_stats_df(
+        summary_stats=summary_stats,
+        include_recent_n_days_stats=False,
+    )
+    expected_records = [
+        {
+            "Показник": "За весь рік (годин)",
+            "Значення": 31.5,
         },
     ]
     expected_df = pd.DataFrame.from_records(expected_records, index="Показник")
@@ -61,16 +83,21 @@ def test_format_last_n_blackouts(df_blackout_events):
     expected_records = [
         {
             "№": 6,
-            "Коли зникло": datetime.fromisoformat("2024-01-07T23:00:00Z"),
-            "Коли з’явилося": datetime.fromisoformat("2024-01-09T02:30:00Z"),
+            "Коли зникло": datetime.fromisoformat("2024-01-07T23:00:00"),
+            "Коли з’явилося": datetime.fromisoformat("2024-01-09T02:30:00"),
             "Тривалість": "27:30:00",
         },
         {
             "№": 7,
-            "Коли зникло": datetime.fromisoformat("2024-01-09T21:00:00Z"),
-            "Коли з’явилося": datetime.fromisoformat("2024-01-09T22:00:00Z"),
+            "Коли зникло": datetime.fromisoformat("2024-01-09T21:00:00"),
+            "Коли з’явилося": datetime.fromisoformat("2024-01-09T22:00:00"),
             "Тривалість": "01:00:00",
         },
     ]
     expected_df = pd.DataFrame.from_records(expected_records, index="№")
     pd.testing.assert_frame_equal(actual_df, expected_df)
+
+
+def test_format_last_n_blackouts_specific_year(df_blackout_events):
+    actual_df = sut.format_last_n_blackouts_df(df_blackout_events, year=2023, n=2)
+    assert len(actual_df) == 0

@@ -58,6 +58,38 @@ def test_transform_events_to_daily_records_timezone_aware():
     pd.testing.assert_frame_equal(actual_df, expected_df)
 
 
+def test_compute_rolling_statistics():
+    # GIVEN a dataframe of daily downtime durations
+    tzinfo = ZoneInfo("Europe/Kyiv")
+    daily_downtimes = [0.0, 3.5, 2.5, 0.5, 0.0, 4.0, 20.0, 1.0, 0.0]
+    daily_downtime_records = [
+        {"date": datetime(2024, 1, idx + 1, tzinfo=tzinfo), "daily_downtime": downtime}
+        for idx, downtime in enumerate(daily_downtimes)
+    ]
+    df_daily_downtime = pd.DataFrame.from_records(daily_downtime_records)
+
+    # WHEN computing the rolling statistics
+    actual_df = sut.compute_rolling_statistics(df_daily_downtime, period="2d")
+
+    # THEN the rolling statistics should be computed correctly for each date
+    expected_df = pd.DataFrame.from_records(
+        [
+            {"date": datetime(2024, 1, 1, tzinfo=tzinfo), "daily_downtime": 0.0},
+            {"date": datetime(2024, 1, 2, tzinfo=tzinfo), "daily_downtime": 1.75},
+            {"date": datetime(2024, 1, 3, tzinfo=tzinfo), "daily_downtime": 3.0},
+            {"date": datetime(2024, 1, 4, tzinfo=tzinfo), "daily_downtime": 1.5},
+            {"date": datetime(2024, 1, 5, tzinfo=tzinfo), "daily_downtime": 0.25},
+            {"date": datetime(2024, 1, 6, tzinfo=tzinfo), "daily_downtime": 2.0},
+            {"date": datetime(2024, 1, 7, tzinfo=tzinfo), "daily_downtime": 12.0},
+            {"date": datetime(2024, 1, 8, tzinfo=tzinfo), "daily_downtime": 10.5},
+            {"date": datetime(2024, 1, 9, tzinfo=tzinfo), "daily_downtime": 0.5},
+        ],
+        index="date",
+    )
+
+    pd.testing.assert_frame_equal(actual_df, expected_df)
+
+
 def test_compute_summary_statistics():
     # GIVEN a dataframe of daily downtime durations
     tzinfo = ZoneInfo("Europe/Kyiv")
