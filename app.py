@@ -12,7 +12,7 @@ from blackout_stats.formatting import format_last_n_blackouts_df
 from blackout_stats.stats import compute_rolling_statistics
 from blackout_stats.stats import compute_summary_statistics
 from blackout_stats.stats import transform_events_to_daily_records
-from blackout_stats.visualization import generate_daily_plot
+from blackout_stats.visualization import generate_year_calendar_heatmap_plot
 
 
 def main() -> None:
@@ -59,7 +59,8 @@ def main() -> None:
 
     st.header("🗓️ Календар тривалості відключень")
     st.caption("(годин за добу)")
-    plot = generate_daily_plot(df_daily_downtime)
+    plot = generate_year_calendar_heatmap_plot(df_daily_downtime)
+    st.bokeh_chart(plot)
 
     st.header("📈 Середньотижнева тривалість відключень")
     st.caption("(годин за добу)")
