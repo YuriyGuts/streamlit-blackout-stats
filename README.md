@@ -1,25 +1,51 @@
 # Streamlit App for Power Outage Statistics
 
 This app reads power outage events from a private Google Sheet (via a GCP service account) and
-displays various time-aware statistics about the durations of the outages. 
+displays various statistics that describe the temporal dynamics of the outages (calendar heatmap,
+weekly rolling averages, etc.).
 
 ## Installation
 
-This project requires Python 3.9 or below.
-Newer Python versions are not compatible with the `gsheetsdb` package which is now deprecated.
+This project requires Python 3.12 (or above) and [Poetry](https://python-poetry.org/).
+
+Install the project dependencies:
 
 ```shell
-python3.9 -m venv ~/.virtualenvs/streamlit-blackout-events
-source ~/.virtualenvs/streamlit-blackout-events/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+poetry install
 ```
 
 Next, create a local `.streamlit/secrets.toml` file according
 to [Streamlit documentation](https://docs.streamlit.io/knowledge-base/tutorials/databases/private-gsheet).
 
-## Run locally:
+```toml
+location_name = "Home"
+target_timezone_name = "Europe/Kyiv"
+private_gsheets_url = "https://docs.google.com/spreadsheets/d/.../edit"
+
+[gcp_service_account]
+type = "service_account"
+# ... more GCP account details here ...
+```
+
+## Startup
+
+Run the app locally:
 
 ```shell
-streamlit run app.py
+source ./.venv/bin/activate
+make run
+```
+
+## Development
+
+Install the dev dependencies:
+```
+poetry install --with dev
+```
+
+Run the tests:
+
+```shell
+source ./.venv/bin/activate
+make test
 ```

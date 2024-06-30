@@ -1,7 +1,10 @@
 [tool.mypy]
 disallow_untyped_defs = true
 disable_error_code = ["import-untyped"]
-exclude = "tests/.*"
+exclude = [
+    "tests/.*",
+    "\\.venv/.*",
+]
 
 [tool.ruff]
 line-length = 100
@@ -38,12 +41,16 @@ description = "Streamlit app for visualizing power outage statistics. Uses Googl
 authors = ["Yuriy Guts <yuriy.guts@gmail.com>"]
 license = "BSD-3-Clause"
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
 streamlit = "^1.35.0"
 shillelagh = {extras = ["gsheetsapi"], version = "^1.2.19"}
 bokeh = "^2.4.3"  # Streamlit does not support higher major versions at the time of adding this.
+
+[tool.poetry.group.dev]
+optional = true
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.7.1"
