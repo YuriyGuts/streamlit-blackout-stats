@@ -18,7 +18,7 @@ def test_format_human_readable_summary_stats_df_with_recent_stats():
     actual_df = sut.format_human_readable_summary_stats_df(summary_stats)
     expected_records = [
         {
-            "Показник": "За весь рік (годин)",
+            "Показник": "Від початку року (годин)",
             "Значення": 31.5,
         },
         {
@@ -38,7 +38,7 @@ def test_format_human_readable_summary_stats_df_with_recent_stats():
             "Значення": 1.05,
         },
     ]
-    expected_df = pd.DataFrame.from_records(expected_records, index="Показник")
+    expected_df = pd.DataFrame.from_records(expected_records)
     pd.testing.assert_frame_equal(actual_df, expected_df)
 
 
@@ -56,11 +56,11 @@ def test_format_human_readable_summary_stats_df_without_recent_stats():
     )
     expected_records = [
         {
-            "Показник": "Від початку року (годин)",
+            "Показник": "За весь рік (годин)",
             "Значення": 31.5,
         },
     ]
-    expected_df = pd.DataFrame.from_records(expected_records, index="Показник")
+    expected_df = pd.DataFrame.from_records(expected_records)
     pd.testing.assert_frame_equal(actual_df, expected_df)
 
 

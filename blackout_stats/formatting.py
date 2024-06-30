@@ -51,7 +51,7 @@ def format_human_readable_summary_stats_df(
             },
         ])
 
-    df = pd.DataFrame.from_records(records, index=["Показник"])
+    df = pd.DataFrame.from_records(records)
     return df
 
 

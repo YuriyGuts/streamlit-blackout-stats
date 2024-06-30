@@ -22,6 +22,7 @@ def main() -> None:
     st.set_page_config(page_title=f"Статистика відключень: {location_name}")
     st.title("💡 Статистика відключень")
     st.subheader(location_name)
+    st.write("Дані відображають фактичні відключення.")
     st.write("Дані можуть оновлюватися з затримкою та не враховувати недавні відключення.")
 
     year_selector = st.selectbox(
@@ -56,7 +57,13 @@ def main() -> None:
         summary_stats=summary_stats,
         include_recent_n_days_stats=is_current_year_selected,
     )
-    st.dataframe(df_summary_stats.style.format("{:.1f}"))
+    st.dataframe(
+        data=df_summary_stats,
+        column_config={
+            "Значення": st.column_config.NumberColumn(format="%.1f"),
+        },
+        hide_index=True,
+    )
 
     st.header("🗓️ Календар тривалості відключень")
     st.caption("(годин за добу)")
