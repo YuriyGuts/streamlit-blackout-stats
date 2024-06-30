@@ -17,11 +17,12 @@ from blackout_stats.visualization import generate_year_calendar_heatmap_plot
 
 def main() -> None:
     location_name = st.secrets["location_name"]
+    target_tzinfo = ZoneInfo(st.secrets["target_timezone_name"])
+
     st.set_page_config(page_title=f"Статистика відключень: {location_name}")
     st.title("💡 Статистика відключень")
     st.subheader(location_name)
     st.write("Дані можуть оновлюватися з затримкою та не враховувати недавні відключення.")
-    target_tzinfo = ZoneInfo(st.secrets["target_timezone_name"])
 
     year_selector = st.selectbox(
         label="Оберіть рік",

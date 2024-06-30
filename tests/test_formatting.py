@@ -56,7 +56,7 @@ def test_format_human_readable_summary_stats_df_without_recent_stats():
     )
     expected_records = [
         {
-            "Показник": "За весь рік (годин)",
+            "Показник": "Від початку року (годин)",
             "Значення": 31.5,
         },
     ]

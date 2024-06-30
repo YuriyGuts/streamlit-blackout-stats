@@ -24,7 +24,9 @@ def format_human_readable_summary_stats_df(
     """
     records = [
         {
-            "Показник": "За весь рік (годин)",
+            "Показник": (
+                "Від початку року (годин)" if include_recent_n_days_stats else "За весь рік (годин)"
+            ),
             "Значення": summary_stats["total_downtime"],
         }
     ]
