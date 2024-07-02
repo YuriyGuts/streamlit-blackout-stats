@@ -4,6 +4,8 @@ This app reads power outage events from a private Google Sheet (via a GCP servic
 displays various statistics that describe the temporal dynamics of the outages (calendar heatmap,
 weekly rolling averages, etc.).
 
+<img width="187" alt="image" src="https://github.com/YuriyGuts/streamlit-blackout-stats/assets/2750531/ed145744-82e3-4810-8c50-7f05d2c546f2">
+
 ## Installation
 
 This project requires Python 3.12 (or above) and [Poetry](https://python-poetry.org/).
