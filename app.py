@@ -22,8 +22,21 @@ def main() -> None:
     st.set_page_config(page_title=f"Статистика відключень: {location_name}")
     st.title("💡 Статистика відключень")
     st.subheader(location_name)
+
+    # Download the power outage data.
+    df_blackout_events = read_blackout_events_from_google_sheet(
+        gcp_service_account_info=st.secrets["gcp_service_account"].to_dict(),
+        sheet_url=st.secrets["private_gsheets_url"],
+    )
+    df_daily_downtime = transform_events_to_daily_records(
+        df_blackout_events=df_blackout_events,
+        target_tzinfo=target_tzinfo,
+    )
+    last_update_date = df_blackout_events["end_date"].max()
+
     st.write("Дані відображають фактичні відключення.")
     st.write("Дані можуть оновлюватися з затримкою та не враховувати недавні відключення.")
+    st.write(f"Останнє оновлення даних: {last_update_date:%Y-%m-%d %H:%M}")
 
     year_selector = st.selectbox(
         label="Оберіть рік",
@@ -33,16 +46,7 @@ def main() -> None:
     )
     is_current_year_selected = (year_selector == datetime.datetime.now().year == year_selector)
 
-    df_blackout_events = read_blackout_events_from_google_sheet(
-        gcp_service_account_info=st.secrets["gcp_service_account"].to_dict(),
-        sheet_url=st.secrets["private_gsheets_url"],
-    )
-    df_daily_downtime = transform_events_to_daily_records(
-        df_blackout_events=df_blackout_events,
-        target_tzinfo=target_tzinfo,
-    )
-
-    # TODO: refactor this.
+    # Filter the outage data to the currently selected year.
     df_blackout_events = pd.DataFrame(
         df_blackout_events[df_blackout_events["start_date"].dt.year == year_selector]
     )
