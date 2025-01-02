@@ -36,13 +36,14 @@ def main() -> None:
 
     st.write("Дані відображають фактичні відключення.")
     st.write("Дані можуть оновлюватися з затримкою та не враховувати недавні відключення.")
-    st.write(f"Останнє оновлення даних: {last_update_date:%Y-%m-%d %H:%M}")
+    st.write(f"Останнє оновлення даних: {last_update_date:%Y-%m-%d %H:%M}.")
 
+    available_years = [2022, 2023, 2024, 2025]
     year_selector = st.selectbox(
         label="Оберіть рік",
         placeholder="Оберіть рік",
-        options=[2022, 2023, 2024],
-        index=2,
+        options=available_years,
+        index=len(available_years) - 1,
     )
     is_current_year_selected = (year_selector == datetime.datetime.now().year == year_selector)
 
