@@ -38,7 +38,7 @@ def main() -> None:
     st.write("Дані можуть оновлюватися з затримкою та не враховувати недавні відключення.")
     st.write(f"Останнє оновлення даних: {last_update_date:%Y-%m-%d %H:%M}.")
 
-    available_years = [2022, 2023, 2024, 2025]
+    available_years = list(range(2022, datetime.datetime.now().year + 1))
     year_selector = st.selectbox(
         label="Оберіть рік",
         placeholder="Оберіть рік",
