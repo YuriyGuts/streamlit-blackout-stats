@@ -8,12 +8,12 @@ weekly rolling averages, etc.).
 
 ## Installation
 
-This project requires Python 3.12 (or above) and [Poetry](https://python-poetry.org/).
+This project requires Python 3.12 (or above) and [uv](https://docs.astral.sh/uv/).
 
 Install the project dependencies:
 
 ```shell
-poetry install
+uv sync
 ```
 
 Next, create a local `.streamlit/secrets.toml` file according
@@ -29,25 +29,53 @@ type = "service_account"
 # ... more GCP account details here ...
 ```
 
-## Startup
+## Usage
 
 Run the app locally:
 
 ```shell
-source ./.venv/bin/activate
 make run
 ```
 
 ## Development
 
-Install the dev dependencies:
-```
-poetry install --with dev
-```
-
-Run the tests:
+Install all dependencies (including dev):
 
 ```shell
-source ./.venv/bin/activate
+uv sync
+```
+
+### Available Commands
+
+Run `make help` to see all available commands:
+
+| Command | Description |
+|---------|-------------|
+| `make run` | Start the Streamlit app |
+| `make test` | Run tests |
+| `make lint` | Run linter |
+| `make lint-fix` | Run linter with auto-fix |
+| `make format` | Format code |
+| `make typecheck` | Run type checker |
+| `make check` | Run all checks (lint, typecheck, test) |
+| `make clean` | Remove cache directories |
+
+### Running Checks
+
+Before committing, run all checks:
+
+```shell
+make check
+```
+
+Or run individual checks:
+
+```shell
+make lint
+make typecheck
 make test
 ```
+
+## License
+
+BSD-3-Clause

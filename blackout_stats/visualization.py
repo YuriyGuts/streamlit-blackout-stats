@@ -1,10 +1,11 @@
 import calendar
+from collections.abc import Iterable
 from datetime import datetime
 from typing import Any
-from typing import Iterable
 
 import numpy as np
 import pandas as pd
+from bokeh.layouts import GridPlot
 from bokeh.layouts import gridplot
 from bokeh.models import CategoricalAxis
 from bokeh.models import CategoricalScale
@@ -14,10 +15,11 @@ from bokeh.models import HoverTool
 from bokeh.models import Plot
 from bokeh.models import Rect
 from bokeh.models import Text
+from bokeh.models.annotations import Title
 from bokeh.palettes import Oranges
 
 
-def generate_year_calendar_heatmap_plot(df_daily_downtime: pd.DataFrame) -> Plot:
+def generate_year_calendar_heatmap_plot(df_daily_downtime: pd.DataFrame) -> GridPlot:
     """Given a dataframe of daily blackout durations, generate a calendar heatmap plot."""
     # Calendar rows x calendar columns.
     calendar_layout = (3, 4)
@@ -37,7 +39,10 @@ def generate_year_calendar_heatmap_plot(df_daily_downtime: pd.DataFrame) -> Plot
     ]
 
     # Arrange months in a grid.
-    grid_plot = gridplot(toolbar_location=None, children=monthly_calendar_plots)
+    grid_plot = gridplot(
+        toolbar_location=None,
+        children=monthly_calendar_plots,  # type: ignore[arg-type]
+    )
     return grid_plot
 
 
@@ -130,7 +135,7 @@ def generate_single_month_calendar_plot(
     source = ColumnDataSource(data=source_data)
 
     x_range = FactorRange(factors=day_names)
-    y_range = FactorRange(factors=np.flip(np.arange(month_week_count).astype(str)))
+    y_range = FactorRange(factors=list(np.flip(np.arange(month_week_count).astype(str))))
     x_scale = CategoricalScale()
     y_scale = CategoricalScale()
 
@@ -142,12 +147,13 @@ def generate_single_month_calendar_plot(
         width=225,
         height=225,
         outline_line_color=None,
+        title=Title(
+            text=calendar.month_name[month],
+            text_font_size="16px",
+            text_color="lightslategray",
+        ),
     )
 
-    plot.title.text = calendar.month_name[month]
-    plot.title.text_font_size = "16px"
-    plot.title.text_color = "lightslategray"
-    plot.title.offset = 0
     plot.min_border_left = 0
     plot.min_border_right = 25
     plot.min_border_top = 0

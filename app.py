@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 import streamlit as st
+from streamlit_bokeh import streamlit_bokeh
 
 from blackout_stats.data_access import read_blackout_events_from_google_sheet
 from blackout_stats.formatting import format_human_readable_summary_stats_df
@@ -47,10 +48,7 @@ def main() -> None:
     )
     is_current_year_selected = (year_selector == datetime.datetime.now().year == year_selector)
 
-    # Filter the outage data to the currently selected year.
-    df_blackout_events_year = pd.DataFrame(
-        df_blackout_events[df_blackout_events["start_date"].dt.year == year_selector]
-    )
+    # Filter the daily downtime data to the currently selected year.
     df_daily_downtime_year = pd.DataFrame(
         df_daily_downtime[df_daily_downtime["date"].dt.year == year_selector]
     )
@@ -88,12 +86,15 @@ def main() -> None:
             "Значення": st.column_config.NumberColumn(format="%.1f"),
         },
         hide_index=True,
+        width="content",
     )
 
     st.header("🗓️ Календар тривалості відключень")
     st.caption("(годин за добу)")
     plot = generate_year_calendar_heatmap_plot(df_daily_downtime_year)
-    st.bokeh_chart(plot)
+    # Use container with explicit height to prevent overlap (4 rows × 225px per month).
+    with st.container(height=920, border=False):
+        streamlit_bokeh(plot, use_container_width=True)
 
     st.header("📈 Середньотижнева тривалість відключень")
     st.caption("(годин за добу)")
@@ -104,7 +105,7 @@ def main() -> None:
 
     st.header("⏱️ Останні 5 відключень")
     df_last_5_blackouts = format_last_n_blackouts_df(df_blackout_events, year=year_selector, n=5)
-    st.dataframe(df_last_5_blackouts)
+    st.dataframe(df_last_5_blackouts, width="content")
 
 
 if __name__ == "__main__":

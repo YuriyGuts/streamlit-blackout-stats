@@ -1,27 +1,27 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-added-large-files
   - repo: local
     hooks:
-      - id: ruff
-        name: ruff
-        entry: make ruff
+      - id: lint
+        name: lint
+        entry: make lint
         language: system
         types: [python]
         require_serial: true
-      - id: ruff-fix
-        name: ruff-fix
-        entry: make ruff-fix
+      - id: lint-fix
+        name: lint-fix
+        entry: make lint-fix
         language: system
         types: [python]
         require_serial: true
-      - id: mypy
-        name: mypy
-        entry: make mypy
+      - id: typecheck
+        name: typecheck
+        entry: make typecheck
         language: system
         types: [python]
         require_serial: true
