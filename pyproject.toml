@@ -33,21 +33,26 @@ exclude = [
 [tool.ruff]
 line-length = 100
 
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
 [tool.ruff.lint]
 select = [
-    "E",     # pyflakes
-    "F",     # pycodestyle
-    "I",     # isort
-    "N",     # pep8-naming
-    "D",     # pydocstyle
-    "PL",    # pylint
-    "UP",    # pyupgrade
-    "INP",   # check missing __init__.py
-    "B006",  # mutable-argument-default
-]
-extend-ignore = [
-    # D100-D106: Ignore undocumented module, class, method, function, inner class.
-    "D100", "D101", "D102", "D103", "D104", "D105", "D106",
+    "B",        # flake8-bugbear
+    "C4",       # flake8-comprehensions
+    "D",        # pydocstyle
+    "E",        # pyflakes
+    "F",        # pycodestyle
+    "I",        # isort
+    "INP",      # check missing __init__.py
+    "N",        # pep8-naming
+    "PL",       # pylint
+    "PT",       # flake8-pytest-style
+    "PYI",      # flake8-pyi
+    "SIM",      # flake8-simplify
+    "UP",       # pyupgrade
+    "W",        # pycodestyle warnings
 ]
 fixable = ["I", "D", "UP"]
 

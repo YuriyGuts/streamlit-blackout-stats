@@ -17,6 +17,7 @@ from blackout_stats.visualization import generate_year_calendar_heatmap_plot
 
 
 def main() -> None:
+    """Render the Streamlit app."""
     location_name = st.secrets["location_name"]
     target_tzinfo = ZoneInfo(st.secrets["target_timezone_name"])
 

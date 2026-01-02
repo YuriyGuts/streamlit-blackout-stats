@@ -65,7 +65,7 @@ def test_format_human_readable_summary_stats_df_without_recent_stats():
 
 
 @pytest.mark.parametrize(
-    "delta, expected_formatted",
+    ("delta", "expected_formatted"),
     [
         (timedelta(seconds=1, milliseconds=250), "00:00:01"),
         (timedelta(seconds=75), "00:01:15"),

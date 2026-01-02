@@ -1,3 +1,4 @@
+"""Statistical computations for blackout event analysis."""
 from datetime import datetime
 from datetime import timedelta
 from zoneinfo import ZoneInfo

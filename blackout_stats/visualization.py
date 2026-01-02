@@ -1,3 +1,4 @@
+"""Visualization components for blackout statistics."""
 import calendar
 from collections.abc import Iterable
 from datetime import datetime

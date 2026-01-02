@@ -1,3 +1,4 @@
+"""Formatting utilities for displaying blackout statistics."""
 from datetime import timedelta
 
 import pandas as pd

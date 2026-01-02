@@ -1,3 +1,4 @@
+"""Data access layer for reading blackout events from various sources."""
 from typing import Any
 
 import pandas as pd
