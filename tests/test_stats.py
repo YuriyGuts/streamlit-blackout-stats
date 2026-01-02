@@ -111,3 +111,60 @@ def test_compute_summary_statistics():
         "last_30_days_downtime": 31.5,
         "last_30_days_avg_downtime": 1.05,
     }
+
+
+def test_compute_summary_statistics_cross_year_boundary():
+    # GIVEN daily downtime data spanning December 2023 and January 2024
+    tzinfo = ZoneInfo("Europe/Kyiv")
+    daily_downtime_records = [
+        # December 2023 data (last 5 days)
+        {"date": datetime(2023, 12, 27, tzinfo=tzinfo), "daily_downtime": 2.0},
+        {"date": datetime(2023, 12, 28, tzinfo=tzinfo), "daily_downtime": 3.0},
+        {"date": datetime(2023, 12, 29, tzinfo=tzinfo), "daily_downtime": 1.0},
+        {"date": datetime(2023, 12, 30, tzinfo=tzinfo), "daily_downtime": 4.0},
+        {"date": datetime(2023, 12, 31, tzinfo=tzinfo), "daily_downtime": 5.0},
+        # January 2024 data (first 3 days)
+        {"date": datetime(2024, 1, 1, tzinfo=tzinfo), "daily_downtime": 6.0},
+        {"date": datetime(2024, 1, 2, tzinfo=tzinfo), "daily_downtime": 2.0},
+        {"date": datetime(2024, 1, 3, tzinfo=tzinfo), "daily_downtime": 1.0},
+    ]
+    df_daily_downtime = pd.DataFrame.from_records(daily_downtime_records)
+
+    # WHEN computing summary statistics with a reference date in early January
+    # and requesting total only for 2024
+    summary_stats = sut.compute_summary_statistics(
+        df_daily_downtime,
+        reference_date=datetime(2024, 1, 3, tzinfo=tzinfo),
+        year_for_total=2024,
+    )
+
+    # THEN the last 7 days should include December data
+    # Last 7 days = Dec 28, 29, 30, 31, Jan 1, 2, 3 = 3+1+4+5+6+2+1 = 22
+    # Total for 2024 only = Jan 1, 2, 3 = 6+2+1 = 9
+    assert summary_stats["total_downtime"] == 9.0
+    assert summary_stats["last_7_days_downtime"] == 22.0
+    assert summary_stats["last_7_days_avg_downtime"] == 22.0 / 7.0
+
+
+def test_compute_rolling_statistics_cross_year_boundary():
+    # GIVEN daily downtime data spanning December 2023 and January 2024
+    tzinfo = ZoneInfo("Europe/Kyiv")
+    daily_downtime_records = [
+        # December 2023 data (last 3 days)
+        {"date": datetime(2023, 12, 29, tzinfo=tzinfo), "daily_downtime": 2.0},
+        {"date": datetime(2023, 12, 30, tzinfo=tzinfo), "daily_downtime": 4.0},
+        {"date": datetime(2023, 12, 31, tzinfo=tzinfo), "daily_downtime": 6.0},
+        # January 2024 data (first 2 days)
+        {"date": datetime(2024, 1, 1, tzinfo=tzinfo), "daily_downtime": 8.0},
+        {"date": datetime(2024, 1, 2, tzinfo=tzinfo), "daily_downtime": 10.0},
+    ]
+    df_daily_downtime = pd.DataFrame.from_records(daily_downtime_records)
+
+    # WHEN computing 3-day rolling statistics
+    df_rolling = sut.compute_rolling_statistics(df_daily_downtime, period="3d")
+
+    # THEN Jan 1 should correctly include Dec 30 and Dec 31 in its window
+    # Jan 1 rolling avg = (4 + 6 + 8) / 3 = 6.0
+    # Jan 2 rolling avg = (6 + 8 + 10) / 3 = 8.0
+    assert df_rolling.loc[datetime(2024, 1, 1, tzinfo=tzinfo), "daily_downtime"] == 6.0
+    assert df_rolling.loc[datetime(2024, 1, 2, tzinfo=tzinfo), "daily_downtime"] == 8.0

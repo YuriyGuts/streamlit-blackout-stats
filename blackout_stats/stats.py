@@ -133,7 +133,11 @@ def compute_rolling_statistics(df_daily_downtime: pd.DataFrame, period: str = "7
     return df_rolling_stats.rolling(period).mean()
 
 
-def compute_summary_statistics(df_daily_downtime: pd.DataFrame) -> dict[str, float]:
+def compute_summary_statistics(
+    df_daily_downtime: pd.DataFrame,
+    reference_date: datetime | None = None,
+    year_for_total: int | None = None,
+) -> dict[str, float]:
     """
     Compute the summary statistics of daily downtime durations.
 
@@ -141,15 +145,41 @@ def compute_summary_statistics(df_daily_downtime: pd.DataFrame) -> dict[str, flo
     ----------
     df_daily_downtime
         The dataframe of daily downtime durations.
+    reference_date
+        The reference date for computing "last N days" statistics.
+        If None, uses the last date in the dataframe.
+    year_for_total
+        If specified, the total_downtime will only include data from this year.
+        If None, includes all data in the dataframe.
 
     Returns
     -------
     A dictionary of summary statistics.
     """
-    total_downtime = df_daily_downtime["daily_downtime"].sum()
-    last_7_days_downtime = df_daily_downtime.tail(7)["daily_downtime"].sum()
+    # Compute total downtime (optionally filtered by year).
+    if year_for_total is not None:
+        df_year = df_daily_downtime[
+            pd.to_datetime(df_daily_downtime["date"]).dt.year == year_for_total
+        ]
+        total_downtime = df_year["daily_downtime"].sum()
+    else:
+        total_downtime = df_daily_downtime["daily_downtime"].sum()
+
+    # Determine reference date for "last N days" calculations.
+    if reference_date is None:
+        reference_date = pd.to_datetime(df_daily_downtime["date"]).max()
+
+    # Use date-based filtering for last N days (allows spanning year boundaries).
+    df_dates = pd.to_datetime(df_daily_downtime["date"])
+    last_7_start = reference_date - timedelta(days=6)
+    last_30_start = reference_date - timedelta(days=29)
+
+    last_7_mask = (df_dates >= last_7_start) & (df_dates <= reference_date)
+    last_30_mask = (df_dates >= last_30_start) & (df_dates <= reference_date)
+
+    last_7_days_downtime = df_daily_downtime.loc[last_7_mask, "daily_downtime"].sum()
     last_7_days_avg_downtime = last_7_days_downtime / 7.0
-    last_30_days_downtime = df_daily_downtime.tail(30)["daily_downtime"].sum()
+    last_30_days_downtime = df_daily_downtime.loc[last_30_mask, "daily_downtime"].sum()
     last_30_days_avg_downtime = last_30_days_downtime / 30.0
 
     result = {

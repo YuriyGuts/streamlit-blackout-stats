@@ -48,14 +48,34 @@ def main() -> None:
     is_current_year_selected = (year_selector == datetime.datetime.now().year == year_selector)
 
     # Filter the outage data to the currently selected year.
-    df_blackout_events = pd.DataFrame(
+    df_blackout_events_year = pd.DataFrame(
         df_blackout_events[df_blackout_events["start_date"].dt.year == year_selector]
     )
-    df_daily_downtime = pd.DataFrame(
+    df_daily_downtime_year = pd.DataFrame(
         df_daily_downtime[df_daily_downtime["date"].dt.year == year_selector]
     )
 
-    summary_stats = compute_summary_statistics(df_daily_downtime)
+    # For rolling statistics, include up to 29 days before Jan 1 of selected year
+    # to ensure accurate 7-day and 30-day rolling windows in early January.
+    year_start = pd.Timestamp(year=year_selector, month=1, day=1, tz=target_tzinfo)
+    lookback_start = year_start - pd.Timedelta(days=29)
+    year_end = pd.Timestamp(year=year_selector, month=12, day=31, tz=target_tzinfo)
+    df_daily_downtime_with_lookback = pd.DataFrame(
+        df_daily_downtime[
+            (df_daily_downtime["date"] >= lookback_start)
+            & (df_daily_downtime["date"] <= year_end)
+        ]
+    )
+
+    # For summary stats, use full data when current year is selected (for accurate last N days
+    # that may span into December of previous year), otherwise use year-filtered data.
+    if is_current_year_selected:
+        summary_stats = compute_summary_statistics(
+            df_daily_downtime,
+            year_for_total=year_selector,
+        )
+    else:
+        summary_stats = compute_summary_statistics(df_daily_downtime_year)
 
     st.header("📊 Скільки часу не було світла")
     df_summary_stats = format_human_readable_summary_stats_df(
@@ -72,12 +92,14 @@ def main() -> None:
 
     st.header("🗓️ Календар тривалості відключень")
     st.caption("(годин за добу)")
-    plot = generate_year_calendar_heatmap_plot(df_daily_downtime)
+    plot = generate_year_calendar_heatmap_plot(df_daily_downtime_year)
     st.bokeh_chart(plot)
 
     st.header("📈 Середньотижнева тривалість відключень")
     st.caption("(годин за добу)")
-    df_rolling_stats = compute_rolling_statistics(df_daily_downtime)
+    df_rolling_stats = compute_rolling_statistics(df_daily_downtime_with_lookback)
+    # Filter to only show the selected year in the chart.
+    df_rolling_stats = df_rolling_stats[df_rolling_stats.index.year == year_selector]
     st.line_chart(df_rolling_stats)
 
     st.header("⏱️ Останні 5 відключень")
