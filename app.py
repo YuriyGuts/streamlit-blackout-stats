@@ -97,8 +97,8 @@ def main() -> None:
     with st.container(height=920, border=False):
         streamlit_bokeh(plot, use_container_width=True)
 
-    st.header("📈 Середньотижнева тривалість відключень")
-    st.caption("(годин за добу)")
+    st.header("📈 Середня добова тривалість відключень")
+    st.caption("(годин за добу, 7-денне ковзне значення)")
     df_rolling_stats = compute_rolling_statistics(df_daily_downtime_with_lookback)
     # Filter to only show the selected year in the chart.
     df_rolling_stats = df_rolling_stats[df_rolling_stats.index.year == year_selector]
